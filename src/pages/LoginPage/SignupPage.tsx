@@ -19,6 +19,8 @@ export default function SignupPage() {
   const [selectedGender, setSelectedGender] = useState<string>("male");
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedArea, setSelectedArea] = useState<number>(0);
+  const [nickname, setNickname] = useState("");
+
   const areasList = ["강남구", "강동구", "강북구", "강서구", "영등포구"];
   const onToggle = () => setIsOpen(!isOpen);
 
@@ -29,6 +31,10 @@ export default function SignupPage() {
       const imageURL = URL.createObjectURL(file);
       setSelectedImage(imageURL);
     }
+  };
+
+  const handleNicknameChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setNickname(event.target.value);
   };
 
   const onOptionClicked = (index: number) => () => {
@@ -63,7 +69,17 @@ export default function SignupPage() {
           </ProfileFrame>
           <NicknameFrame>
             <InfoName>닉네임</InfoName>
-            <NicknameInput type="text" />
+            <NicknameCheck>
+              <NicknameInput
+                type="text"
+                maxLength={8}
+                value={nickname}
+                onChange={handleNicknameChange}
+              />
+              <CheckButton isNicknameValid={nickname.length >= 2}>
+                중복확인
+              </CheckButton>
+            </NicknameCheck>
           </NicknameFrame>
         </ProfileNickname>
 
@@ -112,6 +128,8 @@ export default function SignupPage() {
           {green?.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}
           그린
         </InitialGreen>
+        <InfoName>추천인</InfoName>
+        <InitialGreen>QKF4FDL</InitialGreen>
         <SignupFrame>
           <SignupButton>가입하기</SignupButton>
           <Terms>
@@ -179,6 +197,7 @@ const ProfileImage = styled.img`
   width: 100%;
   height: 100%;
   border-radius: 100px;
+  object-fit: cover;
   /* border: 1px solid var(--nav-gray); */
 `;
 
@@ -207,17 +226,26 @@ const InfoName = styled.div`
   color: var(--dark-gray);
 `;
 
+const NicknameCheck = styled.div`
+  position: relative;
+  height: 24px;
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+`;
+
 const NicknameInput = styled.input`
   position: relative;
-  width: calc(100% - 4px);
-  position: relative;
-  margin-top: 6px;
-  height: 32px;
+  width: calc(100% - 68px);
+  height: 100%;
   border: none;
   background-color: var(--white);
   border-bottom: 1.5px solid var(--nav-gray);
   font-size: 17px;
   font-weight: 400;
+  border-radius: 0px !important;
+  padding-left: 0px;
   &:focus {
     border-bottom: 1.5px solid var(--primary);
     outline: none;
@@ -230,6 +258,17 @@ const NicknameInput = styled.input`
     -webkit-appearance: none;
     margin: 0;
   }
+`;
+
+const CheckButton = styled.div<{ isNicknameValid: boolean }>`
+  margin-bottom: 4px;
+  color: var(--dark-gray);
+  color: ${({ isNicknameValid }) =>
+    isNicknameValid ? "var(--primary)" : "var(--dark-gray)"};
+  transition: color 0.3s ease-in-out;
+  font-size: 14.5px;
+  font-weight: 500;
+  white-space: nowrap;
 `;
 
 const GenderButtonFrame = styled.div`
@@ -283,6 +322,11 @@ const DropdownAreas = styled.div<DropdownProps>`
   border-radius: 0px 0px 10px 10px;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.08);
   overflow-y: scroll;
+  overflow-x: hidden;
+
+  &::-webkit-scrollbar {
+    display: block;
+  }
 `;
 
 const OneArea = styled.div`
@@ -312,6 +356,7 @@ const BigGray = styled.div`
 
 const InitialGreen = styled(BigGray)`
   margin-top: 8px;
+  margin-bottom: 40px;
 `;
 
 const SignupFrame = styled.div`

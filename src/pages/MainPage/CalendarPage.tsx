@@ -11,29 +11,120 @@ import moment from "moment";
 
 export default function CalendarPage() {
   const [value, onChange] = useState<any>(new Date());
-  const testData = [
-    ["2023-11-02", 1200, 600],
-    ["2023-11-04", 300, 0],
-    ["2023-11-07", 0, 800],
-    ["2023-11-10", 2400, 100],
-    ["2023-11-13", 1200, 0],
-    ["2023-11-15", 2000, 200],
-    ["2023-11-17", 0, 800],
-    ["2023-11-19", 600, 400],
-    ["2023-11-22", 1100, 600],
-    ["2023-11-25", 400, 1300],
-    ["2023-11-27", 2000, 3000],
-    ["2023-11-30", 200, 0],
-  ];
+  const monthOfActiveDate = moment(value).format('YYYY-MM');
+  const [activeMonth, setActiveMonth] = useState(monthOfActiveDate);
 
-  const onlyAct = testData.filter((data) => data[1] !== 0);
-  const actSum = testData.reduce((total, data) => total + Number(data[1]), 0);
-
-  const onlyReport = testData.filter((data) => data[2] !== 0);
-  const reportSum = testData.reduce(
-    (total, data) => total + Number(data[2]),
-    0
-  );
+  const getActiveMonth = (activeStartDate: moment.MomentInput) => {
+    const newActiveMonth = moment(activeStartDate).format('YYYY-MM');
+    setActiveMonth(newActiveMonth);
+  };
+  
+  const testList = {
+    "proof_sum": 2500,
+    "proof_count": 10,
+    "accusation_sum": 3000,
+    "accusation_count": 10,
+    "groo_saving_list": [
+        {
+            "date": "2023-11-17",
+            "proof_sum": 250,
+            "proof_count": 1,
+            "accusation_sum": 0,
+            "accusation_count": 0
+        },
+        {
+            "date": "2023-11-18",
+            "proof_sum": 250,
+            "proof_count": 1,
+            "accusation_sum": 0,
+            "accusation_count": 0
+        },
+        {
+            "date": "2023-11-19",
+            "proof_sum": 250,
+            "proof_count": 1,
+            "accusation_sum": 0,
+            "accusation_count": 0
+        },
+        {
+            "date": "2023-11-20",
+            "proof_sum": 250,
+            "proof_count": 1,
+            "accusation_sum": 0,
+            "accusation_count": 0
+        },
+        {
+            "date": "2023-11-21",
+            "proof_sum": 250,
+            "proof_count": 1,
+            "accusation_sum": 300,
+            "accusation_count": 1
+        },
+        {
+            "date": "2023-11-22",
+            "proof_sum": 250,
+            "proof_count": 1,
+            "accusation_sum": 300,
+            "accusation_count": 1
+        },
+        {
+            "date": "2023-11-23",
+            "proof_sum": 250,
+            "proof_count": 1,
+            "accusation_sum": 300,
+            "accusation_count": 1
+        },
+        {
+            "date": "2023-11-24",
+            "proof_sum": 250,
+            "proof_count": 1,
+            "accusation_sum": 300,
+            "accusation_count": 1
+        },
+        {
+            "date": "2023-11-25",
+            "proof_sum": 250,
+            "proof_count": 1,
+            "accusation_sum": 300,
+            "accusation_count": 1
+        },
+        {
+            "date": "2023-11-26",
+            "proof_sum": 250,
+            "proof_count": 1,
+            "accusation_sum": 300,
+            "accusation_count": 1
+        },
+        {
+            "date": "2023-11-27",
+            "proof_sum": 0,
+            "proof_count": 0,
+            "accusation_sum": 300,
+            "accusation_count": 1
+        },
+        {
+            "date": "2023-11-28",
+            "proof_sum": 0,
+            "proof_count": 0,
+            "accusation_sum": 300,
+            "accusation_count": 1
+        },
+        {
+            "date": "2023-11-29",
+            "proof_sum": 0,
+            "proof_count": 0,
+            "accusation_sum": 300,
+            "accusation_count": 1
+        },
+        {
+            "date": "2023-11-30",
+            "proof_sum": 0,
+            "proof_count": 0,
+            "accusation_sum": 300,
+            "accusation_count": 1
+        }
+    ]
+}
 
   const generateComma = (price: number) => {
     return price.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
@@ -52,23 +143,27 @@ export default function CalendarPage() {
           minDetail="month"
           showNeighboringMonth={false}
           showNavigation={true}
+          onActiveStartDateChange={({ activeStartDate }) =>
+              getActiveMonth(activeStartDate)
+            }
           // @ts-ignore
           formatDay={(locale, date) =>
             new Date(date).toLocaleDateString("en-us", { day: "2-digit" })
           }
           // @ts-ignore
           tileContent={({ date, view }) => {
-            const data = testData.find(
-              (x) => x[0] === moment(date).format("YYYY-MM-DD")
-            );
-            if (data) {
-              return (
+            const data = testList.groo_saving_list.find(
+              (x) => x.date === moment(date).format("YYYY-MM-DD")
+              );
+              if (data) {
+                console.log(data)
+                return (
                 <GrewFrame>
-                  {data[1] != 0 ? (
-                    <PlusGrew>+{generateComma(Number(data[1]))}</PlusGrew>
+                  {data.proof_sum != 0 ? (
+                    <PlusGrew>+{generateComma(Number(data.proof_sum))}</PlusGrew>
                   ) : null}
-                  {data[2] != 0 ? (
-                    <MinusGrew>-{generateComma(Number(data[2]))}</MinusGrew>
+                  {data.accusation_sum != 0 ? (
+                    <MinusGrew>-{generateComma(Number(data.accusation_sum))}</MinusGrew>
                   ) : null}
                 </GrewFrame>
               );
@@ -76,22 +171,23 @@ export default function CalendarPage() {
           }}
         />
         <MonthSumText>
-          {moment(value).format("YYYY-MM-DD").slice(5, 7)}월 종합내역
+          
+          {Number(moment(activeMonth).format("YYYY-MM").slice(5,7))}월 종합내역
         </MonthSumText>
         <MonthActFrame>
           <MonthActText>전체 활동</MonthActText>
           <ActCountFrame>
-            <ActCountText>{onlyAct.length}회</ActCountText>
-            <ActGrewCount>{generateComma(Number(actSum))}그루</ActGrewCount>
+            <ActCountText>{testList.proof_count}회</ActCountText>
+            <ActGrewCount>{generateComma(testList.proof_sum)}그루</ActGrewCount>
           </ActCountFrame>
         </MonthActFrame>
 
         <MonthActFrame>
           <MonthActText>전체 제보</MonthActText>
           <ActCountFrame>
-            <ActCountText>{onlyReport.length}회</ActCountText>
+            <ActCountText>{testList.accusation_count}회</ActCountText>
             <ReportGrewCount>
-              -{generateComma(Number(reportSum))}그루
+              -{generateComma(testList.accusation_sum)}그루
             </ReportGrewCount>
           </ActCountFrame>
         </MonthActFrame>

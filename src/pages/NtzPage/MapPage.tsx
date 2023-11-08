@@ -4,6 +4,7 @@ import styled from "styled-components";
 import HeadBar from "../../components/HeadBar/HeadBar";
 import { ModalFrame } from "../../components/Modal/ModalFrame";
 import "../../style/kakaomapOverlay.css"
+// import CompanyList from "../../common/act.json"
 
 interface CategoryProps {
   isSelected: boolean;
@@ -20,10 +21,10 @@ export default function MapPage() {
     "전체보기",
     "전자영수증",
     "텀블러",
-    "컵반환",
+    "일회용컵 반환",
     "리필스테이션",
     "다회용기",
-    "재활용품",
+    "고품질 재활용품",
     "친환경제품",
     "무공해차",
     "폐휴대폰",
@@ -45,6 +46,7 @@ export default function MapPage() {
   const places = [
     {
       category: "텀블러",
+      company: "스타벅스",
       name: "스타벅스 학동역점",
       lat: 37.5146173,
       lng: 127.0307978,
@@ -54,6 +56,7 @@ export default function MapPage() {
     },
     {
       category: "텀블러",
+      company: "스타벅스",
       name: "스타벅스 논현힐탑점",
       lat: 37.5114981,
       lng: 127.0321654,
@@ -63,6 +66,7 @@ export default function MapPage() {
     },
     {
       category: "전자영수증",
+      company: "KB국민은행",
       name: "KB국민은행 학동역",
       lat: 37.5135422,
       lng: 127.0305215,
@@ -71,7 +75,6 @@ export default function MapPage() {
       type: 2,
     }
   ];
-
 
   
   useEffect(() => {
@@ -94,7 +97,7 @@ export default function MapPage() {
       let neLatLng = bounds.getNorthEast(); // 북동쪽 좌표를 얻어옵니다.
       
       const selectedCategory = categoryList[selectedCategoryIndex];
-
+      
       places.forEach((place) => {
         if (selectedCategory === "전체보기" || place.category === selectedCategory) {
           let position = new window.kakao.maps.LatLng(place.lat, place.lng);
@@ -109,6 +112,7 @@ export default function MapPage() {
             });
 
             var customContent = `<div class="custom-overlay">${place.name}</div>`
+            
             // @ts-ignore
             var customOverlay = new window.kakao.maps.CustomOverlay({
               map: map,
@@ -137,8 +141,10 @@ export default function MapPage() {
     if (navigator.geolocation) {
       // GeoLocation을 이용해서 접속 위치를 얻어옵니다
       navigator.geolocation.getCurrentPosition(function (position) {
-        var lat = position.coords.latitude, // 위도
-          lon = position.coords.longitude; // 경도
+        var lat = position.coords.latitude - 0.00025, // 위도
+          lon = position.coords.longitude - 0.0003; // 경도
+
+
 
         console.log(lat, lon);
 
@@ -146,6 +152,18 @@ export default function MapPage() {
         map.setCenter(locPosition);
 
         // 마커와 인포윈도우를 표시합니다
+        var imageSrc = "/images/gps-my.png";
+        var imageSize = new window.kakao.maps.Size(32, 32);
+        var imageOption = {offset : new window.kakao.maps.Point(16,24)};
+
+        var markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+
+        var marker = new window.kakao.maps.Marker({
+          position: locPosition,
+          image: markerImage
+        })
+
+        marker.setMap(map);
       });
     }
 
@@ -263,7 +281,7 @@ const MapAndModal = styled.div`
 const MapFrame = styled.div`
   position: relative;
   width: 100%;
-  height: 57%;
+  height: 54%;
   background-color: var(--white);
 `;
 

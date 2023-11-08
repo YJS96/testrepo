@@ -6,16 +6,34 @@ import ProgressBar from "../../components/ProgressBar/ProgressBar";
 import { ShortButton } from "../../style";
 import { useNavigate } from "react-router-dom";
 
+import { ReactComponent as Notification } from "../../assets/icons/notification-icon.svg";
+
 export default function MainPage() {
   const navigate = useNavigate();
+
+  const toLogin = () => {
+    navigate("/login")
+  }
+  
+  const toSignup = () => {
+    navigate("/signup")
+  }
+  
+  const toWelcome = () => {
+    navigate("/welcome")
+  }
+  
+  const toNotification = () => {
+    navigate("/notice");
+  };
 
   const toMonthCal = () => {
     navigate("/calendar");
   };
 
   const toAct = () => {
-    navigate("/act")
-  }
+    navigate("/act");
+  };
 
   function getCurrentWeek() {
     const day = new Date();
@@ -46,14 +64,43 @@ export default function MainPage() {
   var progress = 100;
   var greenInit = 2400000;
 
-  const weekActCount = [4, 2, 0, 6, 8, 4, 0];
+  const groo_saving_list = [
+    {
+        "date": "2023-11-5",
+        "proof_count": 1
+    },
+    {
+        "date": "2023-11-6",
+        "proof_count": 0
+    },
+    {
+        "date": "2023-11-7",
+        "proof_count": 2
+    },
+    {
+        "date": "2023-11-8",
+        "proof_count": 0
+    },
+    {
+        "date": "2023-11-9",
+        "proof_count": 4
+    },
+    {
+        "date": "2023-11-10",
+        "proof_count": 1
+    },
+    {
+        "date": "2023-11-11",
+        "proof_count": 2
+    }
+]
 
   const getCountColor = (count: number): string => {
     if (count === 0) {
       return "var(--white)";
-    } else if (count <= 2) {
+    } else if (count <= 1) {
       return "var(--third)";
-    } else if (count <= 4) {
+    } else if (count <= 2) {
       return "var(--secondary)";
     } else {
       return "var(--primary)";
@@ -63,6 +110,11 @@ export default function MainPage() {
   return (
     <>
       <MainFrame headbar="no" navbar="yes" bgcolor="third" marginsize="no">
+    <br/><br/><br/><br/><br/><br/><br/>
+      <div onClick={toLogin}>로그인 페이지</div><br/><br/>
+      <div onClick={toSignup}>회원가입 페이지</div><br/><br/>
+      <div onClick={toWelcome}>테스트 페이지</div><br/><br/>
+        <NotificationIcon onClick={toNotification} />
         <HomeFrame>
           <ShowDate>10월 23일 기준</ShowDate>
           <NicknameLine>
@@ -89,13 +141,17 @@ export default function MainPage() {
             {onlyDay.map((day, index) => (
               <OneDay>
                 <DayNumber>{day}</DayNumber>
-                <DayProgress count={getCountColor(weekActCount[index])} />
+                <DayProgress count={getCountColor(groo_saving_list[index].proof_count)} />
               </OneDay>
             ))}
           </WeekdayFrame>
 
           <ButtonsFrame>
-            <ShortButton background="var(--third)" color="var(--primary)" onClick={toAct} >
+            <ShortButton
+              background="var(--third)"
+              color="var(--primary)"
+              onClick={toAct}
+            >
               남은 빚 갚기
             </ShortButton>
             <ShortButton onClick={toMonthCal}>월별 내역</ShortButton>
@@ -106,6 +162,13 @@ export default function MainPage() {
     </>
   );
 }
+
+const NotificationIcon = styled(Notification)`
+  position: absolute;
+  right: 5.56%;
+  top: max(env(safe-area-inset-top), 24px);
+  filter: drop-shadow(2px 2px 6px rgba(0, 0, 0, 0.12));
+`;
 
 const HomeFrame = styled(ModalFrame)`
   padding: 0px 5.56%;

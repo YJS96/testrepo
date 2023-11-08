@@ -18,17 +18,16 @@ const ImageCropper = ({ onCrop, children }: CropProps) => {
   const cropperRef = useRef<ReactCropperElement>(null);
   const [image, setImage] = useState<null | string>(null);
   const [rotation, setRotation] = useState(0);
+  const [marginValue, setMarginValue] = useState(- 8);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (isOpen === false) {
-      setTimeout(() => {setImage(null)}, 260);
+      setTimeout(() => {
+        setImage(null);
+      }, 260);
     }
   }, [isOpen]);
-
-  const handleChildrenClick = () => {
-    if (inputRef.current) inputRef.current.click();
-  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -50,6 +49,10 @@ const ImageCropper = ({ onCrop, children }: CropProps) => {
     setRotation(0);
   };
 
+  // const handleChildrenClick = () => {
+  //   if (inputRef.current) inputRef.current.click();
+  // };
+
   const getCropData = () => {
     if (typeof cropperRef.current?.cropper !== "undefined") {
       onCrop(cropperRef.current?.cropper.getCroppedCanvas().toDataURL());
@@ -62,6 +65,11 @@ const ImageCropper = ({ onCrop, children }: CropProps) => {
       if (degrees >= 0) {
         cropperRef.current?.cropper.rotate(degrees - rotation);
         setRotation(degrees);
+        if (degrees < 334) {
+          setMarginValue(degrees/3.6 - 8.65);
+        } else {
+          setMarginValue(84);
+        }
       } else {
         cropperRef.current?.cropper.rotate(degrees);
       }
@@ -77,14 +85,16 @@ const ImageCropper = ({ onCrop, children }: CropProps) => {
 
   return (
     <Container>
-      <input
+      <ImageInput
         type="file"
+        id="file"
         accept="image/*"
         ref={inputRef}
         style={{ display: "none" }}
         onChange={handleFileChange}
       />
-      <span onClick={handleChildrenClick}>{children}</span>
+      <InputLabel htmlFor="file">{children}</InputLabel>
+      {/* <span onClick={handleChildrenClick}>{children}</span> */}
       <AnimationModal isOpen={isOpen} closeModal={handleCancleClick}>
         <ModalTitle>이미지 편집하기</ModalTitle>
         <IconFrame>
@@ -102,10 +112,16 @@ const ImageCropper = ({ onCrop, children }: CropProps) => {
             autoCropArea={1}
             checkOrientation={false}
             guides
-            style={{ width: "100%" }}
+            style={{
+              width: "calc(100% - 4px)",
+              display: "flex",
+              justifyContent: "center",
+            }}
           />
         </div>
-        <Text>Rotation: {rotation}°</Text>
+        <TextFrame>
+          <Text left={marginValue}>{rotation}°</Text>
+        </TextFrame>
         <Slider
           type="range"
           min="0"
@@ -137,16 +153,46 @@ const Container = styled.div`
   width: 100%;
 `;
 
+const ImageInput = styled.input`
+  position: relative;
+  width: 100%;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+  z-index: 2;
+`;
+
+const InputLabel = styled.label`
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &:hover {
+    cursor: pointer;
+  }
+  overflow: hidden;
+  z-index: 2;
+`;
+
 const ModalTitle = styled.div`
   font-size: 18px;
   font-weight: 550;
   text-align: center;
 `;
 
-const Text = styled.div`
-  font-size: 15px;
-  font-weight: 400;
+const TextFrame = styled.div`
   width: 100%;
+  max-width: 464px;
+`
+const Text = styled.div<{left: number}>`
+  font-size: 15px;
+  width: 48px;
+  text-align: end;
+  font-weight: 400;
+  margin-left: ${(props) => `${props.left}%`};
 `;
 
 const IconFrame = styled.div`

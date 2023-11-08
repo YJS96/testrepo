@@ -4,6 +4,7 @@ import styled from "styled-components";
 import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import { ModalBackground } from "../../components/Modal/ModalBackground";
+import DetailInput from "../../components/Input/DetailInput";
 import AnimationModal from "../../components/Modal/AnimationModal";
 import ImageCropper from "../../components/ImageCropper/ImageCropper";
 import { LongButton, ButtonFrame } from "../../style";
@@ -21,40 +22,40 @@ const reportTypes = [
     type: "PLASTIC",
     content: "일회용품 사용",
     example: "카페 일회용컵, 비닐봉지, 배달 용기 등 불필요한 일회용품 사용",
-    imgUrl: "../src/assets/images/templete1.png",
+    imgUrl: "/images/template1.png",
   },
   {
     type: "PAPER",
     content: "종이 낭비",
     example: "종이 영수증을 받거나 휴지를 과도하게 사용하는 등 종이를 낭비",
-    imgUrl: "../src/assets/images/templete2.png",
+    imgUrl: "/images/template2.png",
   },
   {
     type: "ELECTRICITY",
     content: "전기 낭비",
     example:
       "플러그 안뽑기, 빈 방에 불 켜놓기, 반팔입고 히터 사용 등 과도한 전기 사용",
-    imgUrl: "../src/assets/images/templete3.png",
+    imgUrl: "/images/template3.png",
   },
   {
     type: "WATER",
     content: "물 낭비",
     example:
       "양치 컵 미사용, 물 틀어놓고 설거지, 세탁 나눠서 하기 등 물 절약 비실천",
-    imgUrl: "../src/assets/images/templete4.png",
+    imgUrl: "/images/template4.png",
   },
   {
     type: "FOOD",
     content: "식재료 낭비",
     example:
       "먹을만큼 음식을 구매하지 않는 행위 등으로 많은 음식물 쓰레기를 배출",
-    imgUrl: "../src/assets/images/templete5.png",
+    imgUrl: "/images/template5.png",
   },
   {
     type: "OTHER",
     content: "기타",
     example: "이외 분리수거를 안하거나, 물티슈 사용 등 환경 오염 활동",
-    imgUrl: "../src/assets/images/templete6.png",
+    imgUrl: "/images/template6.png",
   },
 ];
 
@@ -73,18 +74,6 @@ export default function ReportPage() {
   const handleImgSelector = () => {
     setImgSelectorOpen((prev) => !prev);
   };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const nowInput = e.target.value;
-    if (nowInput.length < 21) {
-      setActivityDetail(nowInput);
-      // @ts-ignore
-      setDetailLen(false);
-    } else {
-      // @ts-ignore
-      setDetailLen(true);
-    }
-  }
 
   const handleTempleteClick = (reportType: ReportTypeProps) => {
     setActivityType(reportType);
@@ -118,16 +107,7 @@ export default function ReportPage() {
         </InfoFrame>
         {activityType.type === "OTHER" && (
           <InfoFrame>
-            <InfoName onClick={handleImgSelector}>
-              기타 사유 입력
-              <Text className="gray">{activityDetail.length}/20</Text>
-            </InfoName>
-            <DetailInput
-              value={activityDetail}
-              maxLength={20}
-              onChange={handleInputChange}
-              placeholder="ex) 쓰레기 무단 투기, 차량 요일제 무시 등"
-            />
+            <DetailInput value={activityDetail} setValue={setActivityDetail} type="warn"/>
           </InfoFrame>
         )}
         <InfoFrame>
@@ -157,7 +137,7 @@ export default function ReportPage() {
             {croppedImage ? (
               <CropImg src={croppedImage} alt="Cropped" />
             ) : (
-              <CropImg src="../src/assets/images/upload-image-icon.png" />
+              <ImgIcon src="/public/images/upload-image.png" />
             )}
           </ImageCropper>
         </InfoFrame>
@@ -239,19 +219,6 @@ const Text = styled.div`
   }
 `;
 
-const DetailInput = styled.input`
-  width: calc(100% - 8px);
-  font-size: 13px;
-  outline: none;
-  border: none;
-  border-bottom: 1px solid var(--nav-gray);
-  padding: 4px;
-
-  &::placeholder {
-    font-weight: 300;
-  }
-`;
-
 const Dropdown = styled(DropdownSvg)<{ isShow: boolean }>`
   transform: ${({ isShow }) => (isShow ? "rotate(270deg)" : "rotate(90deg)")};
   transition: transform 0.25s ease;
@@ -278,6 +245,11 @@ const CropImg = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
+`;
+
+const ImgIcon = styled.img`
+  width: 36%;
+  padding: 32%;
 `;
 
 const Margin = styled.div`

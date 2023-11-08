@@ -1,7 +1,7 @@
 // import React from 'react'
 import { useState } from "react";
 import styled from "styled-components";
-import HeadBarCenter from "../../components/HeadBar/HeadBarCenter";
+import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import NavBar from "../../components/NavBar/NavBar";
 import { ReactComponent as PointCircle } from "../../assets/icons/point-circle.svg"
@@ -9,8 +9,9 @@ import { ReactComponent as GruCircle } from "../../assets/icons/gru-circle.svg"
 import { ReactComponent as LeafEmpty } from "../../assets/icons/leaf-empty.svg"
 import { ReactComponent as LeafFill } from "../../assets/icons/leaf-fill.svg"
 import { ReactComponent as BallMenu } from "../../assets/icons/ball-menu-icon.svg"
+import OptionModal from "../../components/Modal/OptionModal";
 
-export default function FeedDetail() {
+export default function PostDetail() {
   const post = {
     writerProfileImg: "",
     writerNickname: "지구구해",
@@ -25,14 +26,23 @@ export default function FeedDetail() {
   }
 
   const [isLiked, setIsLiked] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const toggleLeaf = () => {
     setIsLiked(!isLiked);
   }
 
+  const showModal = () => {
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
   return (
     <>
-      <HeadBarCenter pagename="환경 활동" bgcolor="white" backbutton="yes" />
+      <HeadBar pagename="환경 활동" bgcolor="white" backbutton="yes" center={true} />
       <MainFrame headbar="yes" navbar="yes" bgcolor="white" marginsize="small">
         <PostFrame>
           <WriterContainer>
@@ -41,7 +51,7 @@ export default function FeedDetail() {
               <Bold>{post.writerNickname}</Bold>
               <SubText>{post.time}</SubText>
             </TextBox>
-            <BallMenu />
+            <BallMenu onClick={showModal} />
           </WriterContainer>
           <ActImg src={post.img} />
           <ReactionContainer>
@@ -68,6 +78,8 @@ export default function FeedDetail() {
             </ActContainer>}
         </PostInfoFrame>
       </MainFrame>
+
+      <OptionModal isOpen={modalOpen} closeModal={closeModal} />
       <NavBar />
     </>
   )
@@ -87,6 +99,7 @@ const WriterContainer = styled.div`
 const ProfileImg = styled.img`
   width: 50px;
   height: 50px;
+  aspect-ratio: 1/1;
   border-radius: 50%;
   border: 0.5px solid var(--nav-gray);
   box-sizing: border-box;
@@ -110,8 +123,11 @@ const SubText = styled.div`
 `;
 
 const ActImg = styled.img`
-  width: calc(100% + 32px);
-  margin: 0 -16px;
+  width: 100vw;
+  max-width: calc(100% + 2 * 5.56%);
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
 `;
 
 const ReactionContainer = styled.div`
